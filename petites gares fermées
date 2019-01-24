@@ -32,53 +32,18 @@ View(gares_france_mod)
 glimpse(gares_france_mod)
 gares_france_mod %>% filter(NATURE == "closed") -> closed_gare
 
-## communes----
 
-communes <- read_sf("./Sciences Po R project/data/communes.geojson")
-
-table(communes)
-
-
-library(geojsonio)
-spdf <- geojson_read("./Sciences Po R project/data/communes.geojson",  what = "sp")
-
-#Since it is a bit to much data, I select only a subset of it:
-spdf = spdf[ substr(spdf@data$code,1,2)  %in% c("73", "74") , ]
-
-# I need to fortify the data AND keep trace of the commune code! (Takes 2 minutes)
-library(broom)
-spdf_fortified <- tidy(spdf, region = "code")
-
-# Now I can plot this shape easily as described before:
-ggplot() +
-  geom_polygon(data = spdf_fortified, aes( x = long, y = lat, group = group)) +
-  theme_void() +
-  coord_map()
-                               
-
-## merge my lil closed train stations with french towns-----
-closed_gare %>%
-  left_join(communes, by=c("NOM"="nom")) %>% 
-  select(-geometry) %>% 
-  view()
-
-
-## Ggmap maping-------
-
-
+#### Aizhan's suggestion ### 
+names(closed_gare)
+colnames(closed_gare) <- c("CODE_LIGNE", "NOM", "NATURE", "Latitude", "Longitude", "Status")
+library(devtools)
+require(devtools)
+#devtools::install_github("dkahle/ggmap", ref = "tidyup")
 library(ggmap)
-library(maps)
-library(mapview)
-library(leaflet)
-
-
-  
-  mapview(gares_france_mod)
-  gares_france_mod %>% 
-    leaflet() %>% 
-    addTiles() %>% 
-    addCircleMarkers(radius = 0.01, color = "red")
-
-## NOT having fun ----
-reprendre et tracer carte FR avc donnée + fichier gare fermée 
+register_google(key = "YOUR API KEY") ### if you do not have one or do not manage to obtain one, you can check the Final Code from our project for it 
+basemap <- get_map(location = 'france', zoom=6, maptype = "terrain",
+                   source='google',color='color')
+ggmap(basemap) + 
+  geom_point(data=closed_gare, aes(x=Longitude,y=Latitude, color="red"), 
+             alpha = 0.5)+scale_size_continuous(range=c(1,6))
 
