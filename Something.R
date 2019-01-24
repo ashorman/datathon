@@ -20,7 +20,11 @@ devtools::install_github("dkahle/ggmap") #installed github version in order to u
 
 register_google(key = "AIzaSyBi_RiXjH48o-83enpZgJOczG67WQu2S4k")
 
-#Maternités Data
+#Maternites Data
+
+library(readr)
+Donnees_maternites_2016_Sheet1 <- read_csv("Donnees_maternites_2016 _Sheet1.csv")
+View(Donnees_maternites_2016_Sheet1)
 
 Donnees_maternites_2016_Sheet2 <- Donnees_maternites_2016_Sheet1[!grepl("Prive", Donnees_maternites_2016_Sheet1$statut),]
 View(Donnees_maternites_2016_Sheet2)
@@ -73,7 +77,7 @@ gg <- gg + geom_point(data=geo, aes(x=lon, y=lat, color="#ba2525"))
 gg <- gg +  coord_map(xlim = c(-7, 12), ylim = c(52,41))
 gg <- gg + labs(x=NULL, y=NULL, 
                 title="Geographic Distribution Public 
-                and Associatives Maternités in France in 2016",
+                and Associatives Maternites in France in 2016",
                 subtitle=NULL,
                 caption="Source: Le Monde, www.data.gouv.fr")
 gg <- gg + theme(plot.title=element_text(face="bold", family="roboto_condensed", size=12))
@@ -98,7 +102,7 @@ gg <- gg + scale_fill_gradient(low="#ea4f4f", high="#ff0000", name="Distribution
 gg <- gg +  coord_map("polyconic", xlim = c(-7, 12), ylim = c(52,41)) 
 gg <- gg + labs(x=NULL, y=NULL, 
                 title="Heatmap Distribution of Public and 
-                Associative Maternités in France 2016",
+                Associative Maternites in France 2016",
                 subtitle=NULL,
                 caption="Source: Le Monde, www.data.gouv.fr")
 gg <- gg + theme(plot.title=element_text(face="bold", family="roboto_condensed", size=12))
